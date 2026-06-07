@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hack Criativo</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Bebas+Neue&family=Inter:wght@300;400;600&display=swap');
+
+  :root {
+    --bg: #0a0a0a;
+    --surface: #111;
+    --border: #222;
+    --accent: #00ff88;
+    --accent-dim: #00ff8833;
+    --text: #f0f0f0;
+    --muted: #555;
+    --red: #ff4444;
+  }
+
+  body.light-theme {
+    --bg: #ffffff;
+    --surface: #f4f4f4;
+    --border: #ddd;
+    --accent: #007a3d;
+    --accent-dim: #007a3d22;
+    --text: #111111;
+    --muted: #555;
+    --red: #cc2222;
+  }
+
+  body.light-theme .ctrl-label,
+  body.light-theme .ctrl-value,
+  body.light-theme .seek-label,
+  body.light-theme .seek-pct,
+  body.light-theme .logo,
+  body.light-theme .btn-reset,
+  body.light-theme .btn-edit,
+  body.light-theme .btn-icon,
+  body.light-theme .btn-theme {
+    color: #333;
+  }
+
+  body.light-theme .btn-reset,
+  body.light-theme .btn-edit,
+  body.light-theme .btn-icon,
+  body.light-theme .btn-theme {
+    border-color: #bbb;
+  }
+
+  body.light-theme .btn-reset:hover,
+  body.light-theme .btn-edit:hover,
+  body.light-theme .btn-icon:hover,
+  body.light-theme .btn-theme:hover {
+    color: #000;
+    border-color: #888;
+  }
+
+  body.light-theme .btn-icon.on,
+  body.light-theme .btn-theme.light {
+    color: var(--accent);
+    border-color: var(--accent);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transition: background 0.2s, color 0.2s;
+  }
+
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 20px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+
+  .logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    letter-spacing: 3px;
+    color: var(--accent);
+  }
+
+  .dot {
+    width: 10px; height: 10px; border-radius: 50%;
+    background: var(--red);
+    box-shadow: 0 0 8px var(--red);
+    animation: pulse 1.5s ease-in-out infinite;
+    display: none;
+  }
+  .dot.active { display: block; }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  .controls {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 10px 20px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+    flex-wrap: wrap;
+  }
+
+  .ctrl-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .ctrl-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--muted);
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .ctrl-value {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 13px;
+    color: var(--accent);
+    min-width: 36px;
+    text-align: center;
+  }
+
+  input[type="range"] {
+    -webkit-appearance: none;
+    height: 3px;
+    background: var(--border);
+    border-radius: 2px;
+    outline: none;
+  }
+
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    background: var(--accent);
+    cursor: pointer;
+    box-shadow: 0 0 6px var(--accent);
+  }
+
+  .ctrl-group input[type="range"] { width: 100px; }
+
+  .divider {
+    width: 1px; height: 28px;
+    background: var(--border);
+  }
+
+  .btn {
+    display: flex; align-items: center; gap: 6px;
+    padding: 7px 16px;
+    border: none;
+    border-radius: 4px;
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .btn-play { background: var(--accent); color: #000; }
+  .btn-play:hover { filter: brightness(1.1); transform: scale(1.03); }
+
+  .btn-stop { background: transparent; color: var(--red); border: 1px solid var(--red); }
+  .btn-stop:hover { background: #ff444422; }
+
+  .btn-reset { background: transparent; color: var(--muted); border: 1px solid var(--border); }
+  .btn-reset:hover { color: var(--text); border-color: #444; }
+
+  .btn-edit { background: transparent; color: var(--muted); border: 1px solid var(--border); margin-left: auto; }
+  .btn-edit:hover { color: var(--text); border-color: #444; }
+
+  .btn-icon {
+    background: transparent;
+    color: var(--muted);
+    border: 1px solid var(--border);
+    padding: 7px 12px;
+    font-size: 16px;
+    line-height: 1;
+  }
+  .btn-icon:hover { color: var(--text); border-color: #888; }
+  .btn-icon.on { color: var(--accent); border-color: var(--accent); }
+
+  /* Botão de tema */
+  .btn-theme {
+    background: transparent;
+    color: var(--muted);
+    border: 1px solid var(--border);
+    padding: 7px 14px;
+    font-size: 12px;
+    font-weight: 600;
+    gap: 6px;
+    white-space: nowrap;
+  }
+  .btn-theme:hover { color: var(--text); border-color: #888; }
+  .btn-theme.light { color: var(--accent); border-color: var(--accent); }
+
+  .main {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .fade-top, .fade-bottom {
+    position: absolute;
+    left: 0; right: 0;
+    height: 120px;
+    z-index: 10;
+    pointer-events: none;
+  }
+  .fade-top { top: 0; background: linear-gradient(to bottom, var(--bg) 0%, transparent 100%); }
+  .fade-bottom { bottom: 0; background: linear-gradient(to top, var(--bg) 0%, transparent 100%); }
+
+  .center-line {
+    position: absolute;
+    left: 0; right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 2px;
+    background: linear-gradient(to right, transparent, var(--accent-dim), var(--accent), var(--accent-dim), transparent);
+    z-index: 5;
+    pointer-events: none;
+  }
+
+  .scroll-wrapper {
+    height: 100%;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .scroll-content {
+    padding: 50vh 12% 50vh;
+    will-change: transform;
+  }
+
+  .prompter-text {
+    font-family: 'Inter', sans-serif;
+    font-weight: 300;
+    line-height: 1.6;
+    color: var(--text);
+    white-space: pre-wrap;
+    transition: font-size 0.2s;
+    text-align: left;
+  }
+
+  /* Espelho horizontal — inverte só o conteúdo (esquerda/direita) */
+  .mirror-h .scroll-content { transform: scaleX(-1); }
+
+  /* Espelho vertical: scaleY(-1) so no scroll-content.
+     Texto fica de cabeca pra baixo (para espelho fisico).
+     A direcao do scrollTop e invertida via JS:
+     começa em max e vai decrescendo ate 0. */
+  .mirror-v .scroll-content { transform: scaleY(-1); }
+
+  /* Ambos ao mesmo tempo */
+  .mirror-h.mirror-v .scroll-content { transform: scaleX(-1) scaleY(-1); }
+
+  /* SEEK BAR */
+  .seekbar-wrap {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 20px;
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+  }
+
+  .seek-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--muted);
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  #seekBar {
+    flex: 1;
+    height: 4px;
+    cursor: pointer;
+  }
+
+  #seekBar::-webkit-slider-thumb {
+    width: 16px; height: 16px;
+    box-shadow: 0 0 8px var(--accent);
+  }
+
+  .seek-pct {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px;
+    color: var(--accent);
+    min-width: 38px;
+    text-align: right;
+  }
+
+  /* EDITOR */
+  .editor-panel {
+    position: absolute;
+    inset: 0;
+    background: rgba(10,10,10,0.97);
+    z-index: 20;
+    display: none;
+    flex-direction: column;
+    padding: 20px;
+    gap: 12px;
+  }
+
+  body.light-theme .editor-panel {
+    background: rgba(255,255,255,0.97);
+  }
+
+  .editor-panel.open { display: flex; }
+
+  .editor-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--muted);
+    font-weight: 600;
+  }
+
+  textarea {
+    flex: 1;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    padding: 16px;
+    resize: none;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  textarea:focus { border-color: var(--accent); }
+
+  .editor-actions { display: flex; gap: 10px; justify-content: flex-end; }
+
+  .btn-confirm { background: var(--accent); color: #000; }
+  .btn-confirm:hover { filter: brightness(1.1); }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">HACK CRIATIVO</div>
+  <div id="keyBadge" style="
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    background: var(--border);
+    padding: 4px 10px;
+    border-radius: 4px;
+    letter-spacing: 1px;
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+  ">—</div>
+  <div class="dot" id="recDot"></div>
+</header>
+
+<div class="controls">
+  <div class="ctrl-group">
+    <span class="ctrl-label">Velocidade</span>
+    <input type="range" id="speedSlider" min="10" max="300" value="60">
+    <span class="ctrl-value" id="speedVal">60</span>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="ctrl-group">
+    <span class="ctrl-label">Tamanho</span>
+    <input type="range" id="sizeSlider" min="18" max="72" value="36">
+    <span class="ctrl-value" id="sizeVal">36</span>
+  </div>
+
+  <div class="divider"></div>
+
+  <button class="btn btn-play" id="playBtn" onclick="startPlay()">▶ PLAY</button>
+  <button class="btn btn-stop" id="pauseBtn" onclick="pausePlay()" style="display:none">⏸ PAUSA</button>
+  <button class="btn btn-reset" onclick="resetPlay()">↺ Reset</button>
+
+  <div class="divider"></div>
+
+  <!-- Espelho Horizontal (⇄) -->
+  <button class="btn btn-icon" id="mirrorHBtn" onclick="toggleMirrorH()" title="Espelhar horizontal (esquerda/direita)">⇄</button>
+
+  <!-- Espelho Vertical (⇅) — para espelho físico de teleprompter -->
+  <button class="btn btn-icon" id="mirrorVBtn" onclick="toggleMirrorV()" title="Inverter vertical (para espelho físico de teleprompter)">⇅</button>
+
+  <!-- Tema claro/escuro -->
+  <button class="btn btn-icon btn-theme" id="themeBtn" onclick="toggleTheme()" title="Alternar tema claro/escuro">☀ Claro</button>
+
+  <button class="btn btn-edit" onclick="openEditor()">✎ Editar texto</button>
+</div>
+
+<div class="main" id="mainArea">
+  <div class="fade-top"></div>
+  <div class="center-line"></div>
+  <div class="scroll-wrapper" id="scrollWrapper">
+    <div class="scroll-content">
+      <div class="prompter-text" id="promptText"></div>
+    </div>
+  </div>
+  <div class="fade-bottom"></div>
+
+  <div class="editor-panel" id="editorPanel">
+    <span class="editor-label">Digite ou cole seu roteiro</span>
+    <textarea id="scriptInput" placeholder="Cole aqui o seu roteiro..."></textarea>
+    <div class="editor-actions">
+      <button class="btn btn-reset" onclick="closeEditor()">Cancelar</button>
+      <button class="btn btn-confirm" onclick="applyText()">✓ Confirmar</button>
+    </div>
+  </div>
+</div>
+
+<!-- SEEK BAR -->
+<div class="seekbar-wrap">
+  <span class="seek-label">Posição</span>
+  <input type="range" id="seekBar" min="0" max="1000" value="0">
+  <span class="seek-pct" id="seekPct">0%</span>
+</div>
+
+<script>
+  let isPlaying = false;
+  let isMirroredH = false;
+  let isMirroredV = false;
+  let isLightTheme = false;
+  let animFrame = null;
+  let lastTime = null;
+  let scrollPos = 0;
+  let isSeeking = false;
+
+  const wrapper = document.getElementById('scrollWrapper');
+  const promptText = document.getElementById('promptText');
+  const speedSlider = document.getElementById('speedSlider');
+  const sizeSlider = document.getElementById('sizeSlider');
+  const speedVal = document.getElementById('speedVal');
+  const sizeVal = document.getElementById('sizeVal');
+  const recDot = document.getElementById('recDot');
+  const seekBar = document.getElementById('seekBar');
+  const seekPct = document.getElementById('seekPct');
+
+  const defaultText = `Olá, bem-vindo ao seu teleprompter!\n\nEste é um exemplo de roteiro para você testar.\n\nClique em "Editar texto" para colar o seu próprio conteúdo.\n\nUse os controles acima para ajustar a velocidade de rolagem e o tamanho da fonte.\n\nQuando estiver pronto, pressione PLAY e comece a falar!\n\nO botão ⇄ espelha o texto horizontalmente.\n\nO botão ⇅ inverte o texto verticalmente — ideal para usar com espelho físico de teleprompter.\n\nO botão ☀ Claro alterna entre fundo escuro e fundo branco.`;
+
+  promptText.textContent = defaultText;
+  promptText.style.fontSize = sizeSlider.value + 'px';
+
+  speedSlider.addEventListener('input', () => { speedVal.textContent = speedSlider.value; });
+  sizeSlider.addEventListener('input', () => {
+    sizeVal.textContent = sizeSlider.value;
+    promptText.style.fontSize = sizeSlider.value + 'px';
+  });
+
+  function getMaxScroll() { return wrapper.scrollHeight - wrapper.clientHeight; }
+
+  // Quando mirror-v esta ativo o scroll-content esta virado de cabeca pra baixo.
+  // scrollTop=max exibe o INICIO do texto, scrollTop=0 exibe o FINAL.
+  // scrollPos vai de 0 (inicio) ate max (fim) — aplicamos a inversao aqui.
+  function applyScroll() {
+    const max = getMaxScroll();
+    wrapper.scrollTop = isMirroredV ? (max - scrollPos) : scrollPos;
+  }
+
+  function updateSeek() {
+    if (isSeeking) return;
+    const max = getMaxScroll();
+    const pct = max > 0 ? scrollPos / max : 0;
+    seekBar.value = Math.round(pct * 1000);
+    seekPct.textContent = Math.round(pct * 100) + '%';
+  }
+
+  seekBar.addEventListener('mousedown', () => { isSeeking = true; });
+  seekBar.addEventListener('touchstart', () => { isSeeking = true; }, { passive: true });
+
+  seekBar.addEventListener('input', () => {
+    const pct = seekBar.value / 1000;
+    scrollPos = pct * getMaxScroll();
+    applyScroll();
+    seekPct.textContent = Math.round(pct * 100) + '%';
+  });
+
+  seekBar.addEventListener('mouseup', () => { isSeeking = false; lastTime = null; });
+  seekBar.addEventListener('touchend', () => { isSeeking = false; lastTime = null; });
+
+  function tick(timestamp) {
+    if (!isPlaying) return;
+    if (!lastTime) lastTime = timestamp;
+    const delta = (timestamp - lastTime) / 1000;
+    lastTime = timestamp;
+    scrollPos += parseFloat(speedSlider.value) * delta;
+    const max = getMaxScroll();
+    if (scrollPos >= max) {
+      scrollPos = max;
+      applyScroll();
+      updateSeek();
+      stopPlay();
+      return;
+    }
+    applyScroll();
+    updateSeek();
+    animFrame = requestAnimationFrame(tick);
+  }
+
+  function startPlay() {
+    if (isPlaying) return;
+    isPlaying = true;
+    lastTime = null;
+    recDot.classList.add('active');
+    document.getElementById('playBtn').style.display = 'none';
+    document.getElementById('pauseBtn').style.display = 'flex';
+    animFrame = requestAnimationFrame(tick);
+  }
+
+  function pausePlay() {
+    isPlaying = false;
+    recDot.classList.remove('active');
+    document.getElementById('playBtn').style.display = 'flex';
+    document.getElementById('pauseBtn').style.display = 'none';
+    if (animFrame) cancelAnimationFrame(animFrame);
+  }
+
+  function stopPlay() { pausePlay(); }
+
+  function resetPlay() {
+    pausePlay();
+    scrollPos = 0;
+    applyScroll();
+    updateSeek();
+  }
+
+  function toggleMirrorH() {
+    isMirroredH = !isMirroredH;
+    document.getElementById('mirrorHBtn').classList.toggle('on', isMirroredH);
+    wrapper.classList.toggle('mirror-h', isMirroredH);
+  }
+
+  function toggleMirrorV() {
+    isMirroredV = !isMirroredV;
+    document.getElementById('mirrorVBtn').classList.toggle('on', isMirroredV);
+    wrapper.classList.toggle('mirror-v', isMirroredV);
+    applyScroll();
+  }
+
+  function toggleTheme() {
+    isLightTheme = !isLightTheme;
+    document.body.classList.toggle('light-theme', isLightTheme);
+    const btn = document.getElementById('themeBtn');
+    if (isLightTheme) {
+      btn.textContent = '🌙 Escuro';
+      btn.classList.add('light');
+    } else {
+      btn.textContent = '☀ Claro';
+      btn.classList.remove('light');
+    }
+  }
+
+  function openEditor() {
+    pausePlay();
+    document.getElementById('scriptInput').value = promptText.textContent;
+    document.getElementById('editorPanel').classList.add('open');
+    document.getElementById('scriptInput').focus();
+  }
+
+  function closeEditor() { document.getElementById('editorPanel').classList.remove('open'); }
+
+  function applyText() {
+    const val = document.getElementById('scriptInput').value.trim();
+    if (val) { promptText.textContent = val; resetPlay(); }
+    closeEditor();
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if (e.target.tagName === 'TEXTAREA') return;
+    if (e.code === 'Space') { e.preventDefault(); isPlaying ? pausePlay() : startPlay(); }
+    if (e.code === 'KeyR') resetPlay();
+    if (e.code === 'KeyE') openEditor();
+    if (e.code === 'KeyT') toggleTheme();
+    if (e.code === 'KeyH') toggleMirrorH();
+    if (e.code === 'KeyV') toggleMirrorV();
+  });
+</script>
+</body>
+</html>
