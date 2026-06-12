@@ -34,7 +34,7 @@
     font-family: 'Inter', sans-serif;
     background: var(--bg);
     color: var(--text);
-    height: 100vh;
+    height: 100dvh;
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -50,9 +50,9 @@
     background: var(--surface);
     border-bottom: 1px solid var(--border);
     flex-shrink: 0;
-    max-height: 50px;
+    height: 44px;
     overflow: hidden;
-    transition: opacity 0.4s, max-height 0.4s, padding 0.4s, border 0.4s;
+    transition: opacity 0.4s, height 0.4s, padding 0.4s, border-color 0.4s;
   }
   .logo {
     font-family: 'Bebas Neue', sans-serif;
@@ -73,7 +73,7 @@
     50% { opacity: 0.3; }
   }
 
-  /* ── CONTROLS — duas linhas fixas ── */
+  /* ── CONTROLS ── */
   .controls {
     background: var(--surface);
     border-bottom: 1px solid var(--border);
@@ -82,36 +82,39 @@
     display: flex;
     flex-direction: column;
     gap: 8px;
-    max-height: 100px;
+    height: 88px;
     overflow: hidden;
-    transition: opacity 0.4s, max-height 0.4s, padding 0.4s, border 0.4s;
+    transition: opacity 0.4s, height 0.4s, padding 0.4s, border-color 0.4s;
   }
   .ctrl-row {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
   }
 
   /* ── AUTO-HIDE durante play ── */
   body.playing header,
   body.playing .controls {
     opacity: 0;
-    max-height: 0 !important;
+    height: 0 !important;
     padding-top: 0 !important;
     padding-bottom: 0 !important;
     pointer-events: none;
     border-color: transparent !important;
   }
-  body.playing.peek header,
-  body.playing.peek .controls {
+  body.playing.peek header {
     opacity: 1;
-    max-height: 50px !important;
+    height: 44px !important;
     padding: 8px 16px !important;
     pointer-events: all;
     border-color: var(--border) !important;
   }
   body.playing.peek .controls {
-    max-height: 100px !important;
+    opacity: 1;
+    height: 88px !important;
+    padding: 8px 16px !important;
+    pointer-events: all;
+    border-color: var(--border) !important;
   }
 
   /* dica de toque */
@@ -135,30 +138,23 @@
 
   /* ── WIDGETS ── */
   .ctrl-icon {
-    font-size: 17px;
+    font-size: 16px;
     line-height: 1;
     flex-shrink: 0;
     cursor: default;
     user-select: none;
     color: var(--muted);
-    font-family: 'Bebas Neue', sans-serif;
-    letter-spacing: 1px;
   }
-
-  .ctrl-label {
-    font-size: 10px;
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-    color: var(--muted);
-    font-weight: 600;
-    white-space: nowrap;
-    min-width: 72px;
+  .ctrl-icon.label {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 18px;
+    letter-spacing: 1px;
   }
   .ctrl-value {
     font-family: 'Share Tech Mono', monospace;
     font-size: 12px;
     color: var(--accent);
-    min-width: 28px;
+    min-width: 26px;
     text-align: center;
   }
   input[type="range"] {
@@ -167,22 +163,23 @@
     background: var(--border);
     border-radius: 2px;
     outline: none;
-    flex: 1;
+    width: 90px;
+    flex-shrink: 0;
   }
   input[type="range"]::-webkit-slider-thumb {
     -webkit-appearance: none;
-    width: 14px; height: 14px;
+    width: 16px; height: 16px;
     border-radius: 50%;
     background: var(--accent);
     cursor: pointer;
     box-shadow: 0 0 6px var(--accent);
   }
-  .divider-v { width: 1px; height: 24px; background: var(--border); flex-shrink: 0; }
+  .divider-v { width: 1px; height: 22px; background: var(--border); flex-shrink: 0; }
 
   /* ── BUTTONS ── */
   .btn {
     display: inline-flex; align-items: center; gap: 5px;
-    padding: 6px 13px;
+    padding: 6px 12px;
     border: none; border-radius: 4px;
     font-family: 'Inter', sans-serif;
     font-size: 11px; font-weight: 600;
@@ -192,20 +189,21 @@
     white-space: nowrap;
     flex-shrink: 0;
   }
-  .btn-play { background: var(--accent); color: #000; }
+  /* texto do botão play sempre preto independente do tema */
+  .btn-play { background: var(--accent); color: #000 !important; }
   .btn-play:hover { filter: brightness(1.1); transform: scale(1.03); }
   .btn-stop { background: transparent; color: var(--red); border: 1px solid var(--red); }
   .btn-stop:hover { background: #ff444422; }
   .btn-ghost { background: transparent; color: var(--muted); border: 1px solid var(--border); }
   .btn-ghost:hover { color: var(--text); border-color: #888; }
   .btn-ghost.on { color: var(--accent); border-color: var(--accent); }
-  .btn-icon { padding: 6px 10px; font-size: 15px; line-height: 1; }
+  .btn-icon { padding: 6px 9px; font-size: 14px; line-height: 1; }
   .spacer { flex: 1; }
 
   /* ── MAIN ── */
-  .main { flex: 1; position: relative; overflow: hidden; }
+  .main { flex: 1; position: relative; overflow: hidden; min-height: 0; }
   .fade-top, .fade-bottom {
-    position: absolute; left: 0; right: 0; height: 100px;
+    position: absolute; left: 0; right: 0; height: 90px;
     z-index: 10; pointer-events: none;
   }
   .fade-top { top: 0; background: linear-gradient(to bottom, var(--bg), transparent); }
@@ -233,23 +231,26 @@
   .mirror-v .scroll-content { transform: scaleY(-1); }
   .mirror-h.mirror-v .scroll-content { transform: scaleX(-1) scaleY(-1); }
 
-  /* ── SEEKBAR ── */
+  /* ── SEEKBAR — sempre visível, fora do fluxo do auto-hide ── */
   .seekbar-wrap {
     flex-shrink: 0;
-    display: flex; align-items: center; gap: 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
     padding: 10px 16px;
     background: var(--surface);
     border-top: 1px solid var(--border);
-    transition: padding 0.3s;
+    /* nunca ocultar — fica fixo no rodapé */
+    position: relative;
+    z-index: 30;
   }
-  body.playing .seekbar-wrap { padding: 13px 16px; }
   .seek-label {
     font-size: 10px; text-transform: uppercase;
     letter-spacing: 1.5px; color: var(--muted);
     font-weight: 600; white-space: nowrap;
   }
-  #seekBar { flex: 1; height: 4px; cursor: pointer; }
-  #seekBar::-webkit-slider-thumb { width: 18px; height: 18px; box-shadow: 0 0 8px var(--accent); }
+  #seekBar { flex: 1; height: 4px; cursor: pointer; min-width: 0; width: auto; }
+  #seekBar::-webkit-slider-thumb { width: 20px; height: 20px; box-shadow: 0 0 8px var(--accent); }
   .seek-pct {
     font-family: 'Share Tech Mono', monospace;
     font-size: 12px; color: var(--accent);
@@ -278,7 +279,7 @@
   }
   textarea:focus { border-color: var(--accent); }
   .editor-actions { display: flex; gap: 10px; justify-content: flex-end; }
-  .btn-confirm { background: var(--accent); color: #000; }
+  .btn-confirm { background: var(--accent); color: #000 !important; }
   .btn-confirm:hover { filter: brightness(1.1); }
 
   /* ── KEY BADGE ── */
@@ -301,17 +302,15 @@
 </header>
 
 <div class="controls">
-  <!-- Linha 1: sliders + play/pausa/reset -->
   <div class="ctrl-row">
     <span class="ctrl-icon" title="Velocidade">🐢</span>
     <input type="range" id="speedSlider" min="10" max="140" value="36">
     <span class="ctrl-value" id="speedVal">36</span>
     <div class="divider-v"></div>
-    <span class="ctrl-icon" title="Tamanho do texto">T</span>
+    <span class="ctrl-icon label" title="Tamanho do texto">T</span>
     <input type="range" id="sizeSlider" min="18" max="72" value="36">
     <span class="ctrl-value" id="sizeVal">36</span>
   </div>
-  <!-- Linha 2: botões de ação -->
   <div class="ctrl-row">
     <button class="btn btn-play" id="playBtn" onclick="startPlay()">▶ PLAY</button>
     <button class="btn btn-stop" id="pauseBtn" onclick="pausePlay()" style="display:none">⏸ PAUSA</button>
@@ -319,7 +318,7 @@
     <div class="divider-v"></div>
     <button class="btn btn-ghost btn-icon" id="mirrorHBtn" onclick="toggleMirrorH()" title="Espelhar horizontal">⇄</button>
     <button class="btn btn-ghost btn-icon" id="mirrorVBtn" onclick="toggleMirrorV()" title="Inverter vertical">⇅</button>
-    <button class="btn btn-ghost" id="themeBtn" onclick="toggleTheme()">☀ Claro</button>
+    <button class="btn btn-ghost btn-icon" id="themeBtn" onclick="toggleTheme()" title="Alternar tema">☀</button>
     <div class="spacer"></div>
     <button class="btn btn-ghost" onclick="openEditor()">✎ Editar</button>
   </div>
@@ -375,7 +374,7 @@
   const seekPct     = document.getElementById('seekPct');
   const keyBadge    = document.getElementById('keyBadge');
 
-  const defaultText = `Olá, bem-vindo ao Hack Criativo Teleprompter!\n\nClique em "Editar" para colar o seu roteiro.\n\nAjuste a Velocidade e o Tamanho da fonte nos controles acima.\n\nPressione PLAY — os controles somem automaticamente.\nToque na tela para reexibi-los por alguns segundos.\n\n⇄  espelha o texto horizontalmente\n⇅  inverte verticalmente (para espelho físico)\n☀  alterna entre tema escuro e claro`;
+  const defaultText = `Olá, bem-vindo ao Hack Criativo Teleprompter!\n\nClique em "Editar" para colar o seu roteiro.\n\nAjuste a Velocidade 🐢 e o Tamanho T da fonte nos controles acima.\n\nPressione PLAY — os controles somem automaticamente.\nToque na tela para reexibi-los por alguns segundos.\n\n⇄  espelha o texto horizontalmente\n⇅  inverte verticalmente (para espelho físico)\n☀  alterna entre tema escuro e claro`;
 
   promptText.textContent = defaultText;
   promptText.style.fontSize = sizeSlider.value + 'px';
@@ -455,7 +454,6 @@
     applyScroll(); updateSeek();
   }
 
-  /* peek — reexibe controles ao tocar/mover durante play */
   function triggerPeek() {
     if (!isPlaying) return;
     document.body.classList.add('peek');
@@ -465,7 +463,6 @@
   document.addEventListener('mousemove',  triggerPeek);
   document.addEventListener('touchstart', triggerPeek, { passive: true });
 
-  /* espelhos */
   function toggleMirrorH() {
     isMirroredH = !isMirroredH;
     document.getElementById('mirrorHBtn').classList.toggle('on', isMirroredH);
@@ -478,16 +475,14 @@
     applyScroll();
   }
 
-  /* tema */
   function toggleTheme() {
     isLight = !isLight;
     document.body.classList.toggle('light-theme', isLight);
     const btn = document.getElementById('themeBtn');
-    btn.textContent = isLight ? '🌙 Escuro' : '☀ Claro';
+    btn.textContent = isLight ? '🌙' : '☀';
     btn.classList.toggle('on', isLight);
   }
 
-  /* editor */
   function openEditor() {
     pausePlay();
     document.getElementById('scriptInput').value = promptText.textContent;
@@ -501,38 +496,21 @@
     closeEditor();
   }
 
-  /* teclado + shutter Bluetooth */
   let badgeTimer = null;
   document.addEventListener('keydown', (e) => {
     if (e.target.tagName === 'TEXTAREA') return;
-
-    // badge diagnóstico
     keyBadge.textContent = e.code + (e.key !== e.code ? ' [' + e.key + ']' : '');
     keyBadge.style.opacity = '1';
     clearTimeout(badgeTimer);
     badgeTimer = setTimeout(() => { keyBadge.style.opacity = '0'; }, 2000);
 
     switch (e.code) {
-      case 'Space':
-      case 'Enter':
-      case 'MediaPlayPause':
-        e.preventDefault();
-        isPlaying ? pausePlay() : startPlay();
-        break;
-      case 'ArrowUp':
-      case 'AudioVolumeUp':
-      case 'VolumeUp':
-        e.preventDefault();
-        scrollPos = Math.max(scrollPos - 160, 0);
-        applyScroll(); updateSeek();
-        break;
-      case 'ArrowDown':
-      case 'AudioVolumeDown':
-      case 'VolumeDown':
-        e.preventDefault();
-        scrollPos = Math.min(scrollPos + 160, getMaxScroll());
-        applyScroll(); updateSeek();
-        break;
+      case 'Space': case 'Enter': case 'MediaPlayPause':
+        e.preventDefault(); isPlaying ? pausePlay() : startPlay(); break;
+      case 'ArrowUp': case 'AudioVolumeUp': case 'VolumeUp':
+        e.preventDefault(); scrollPos = Math.max(scrollPos - 160, 0); applyScroll(); updateSeek(); break;
+      case 'ArrowDown': case 'AudioVolumeDown': case 'VolumeDown':
+        e.preventDefault(); scrollPos = Math.min(scrollPos + 160, getMaxScroll()); applyScroll(); updateSeek(); break;
       case 'ArrowLeft':  e.preventDefault(); scrollPos = Math.max(scrollPos - 160, 0); applyScroll(); updateSeek(); break;
       case 'ArrowRight': e.preventDefault(); scrollPos = Math.min(scrollPos + 160, getMaxScroll()); applyScroll(); updateSeek(); break;
       case 'KeyR': resetPlay(); break;
